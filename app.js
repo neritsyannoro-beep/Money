@@ -151,6 +151,10 @@ function startOfWeek(d) {
 function periodRange(kind, offset) {
   const now = new Date();
   if (kind === 'all') return { kind, from: null, to: null, label: 'Всё время', days: null };
+  if (kind === 'day') {
+    const from = addDays(startOfDay(now), offset);
+    return { kind, from, to: addDays(from, 1), label: humanDay(from), days: 1 };
+  }
   if (kind === 'week') {
     const from = addDays(startOfWeek(now), offset * 7);
     const to = addDays(from, 7);
@@ -193,6 +197,7 @@ const sum = (list) => list.reduce((acc, e) => acc + e.amount, 0);
 
 function prevRange(range) {
   if (!range.from) return null;
+  if (range.kind === 'day') return { kind: 'day', from: addDays(range.from, -1), to: range.from, days: 1 };
   if (range.kind === 'week') return { kind: 'week', from: addDays(range.from, -7), to: range.from, days: 7 };
   const from = new Date(range.from.getFullYear(), range.from.getMonth() - 1, 1);
   return { kind: 'month', from, to: range.from, days: Math.round((range.from - from) / 86400000) };
@@ -243,7 +248,7 @@ function renderHero(range, list, total) {
   // подпись: количество, в день, сравнение с прошлым периодом
   const parts = [];
   parts.push(`<span><b>${list.length}</b> ${plural(list.length, 'трата', 'траты', 'трат')}</span>`);
-  if (!isAll && total > 0) {
+  if (!isAll && range.kind !== 'day' && total > 0) {
     const elapsed = daysElapsed(range);
     parts.push(`<span><b>${money(Math.round(total / Math.max(1, elapsed)), { cents: false })}</b> в день</span>`);
   }
@@ -254,8 +259,13 @@ function renderHero(range, list, total) {
       const diff = Math.round(((total - prevTotal) / prevTotal) * 100);
       if (diff !== 0) {
         const cls = diff > 0 ? 'delta--up' : 'delta--down';
-        parts.push(`<span class="delta ${cls}">${diff > 0 ? '↑' : '↓'} ${Math.abs(diff)}% к прошлому</span>`);
-      } else parts.push('<span>как в прошлом периоде</span>');
+        // на прошлых днях «вчера» звучало бы про сегодняшнее вчера — уточняем формулировку
+        const to = range.kind !== 'day' ? 'к прошлому' : (ui.offset === 0 ? 'ко вчера' : 'к пред. дню');
+        parts.push(`<span class="delta ${cls}">${diff > 0 ? '↑' : '↓'} ${Math.abs(diff)}% ${to}</span>`);
+      } else {
+        const same = range.kind !== 'day' ? 'в прошлом периоде' : (ui.offset === 0 ? 'вчера' : 'в предыдущий день');
+        parts.push(`<span>как ${same}</span>`);
+      }
     }
   }
   const metaHtml = parts.join('');
@@ -302,9 +312,11 @@ function plural(n, one, few, many) {
 function renderList(range, list) {
   const body = $('#listBody');
   if (!list.length) {
-    body.innerHTML = state.expenses.length
-      ? emptyBlock('🗓', 'За этот период пусто', 'Полистай стрелками назад или переключи период сверху.')
-      : emptyBlock('🧾', 'Пока пусто', 'Жми плюс и запиши первую трату. Заносить лучше сразу, а не вечером по памяти.');
+    body.innerHTML = !state.expenses.length
+      ? emptyBlock('🧾', 'Пока пусто', 'Жми плюс и запиши первую трату. Заносить лучше сразу, а не вечером по памяти.')
+      : range.kind === 'day'
+        ? emptyBlock('🗓', 'За этот день ничего', 'Либо день был бесплатный, либо трата ещё не записана. Стрелками можно уйти на день назад.')
+        : emptyBlock('🗓', 'За этот период пусто', 'Полистай стрелками назад или переключи период сверху.');
     return;
   }
   const groups = new Map();
@@ -370,9 +382,9 @@ function renderReport(range, list, total) {
   // Плитки
   html += `<div class="stats">
     <div class="stat"><div class="stat__k">Средний чек</div><div class="stat__v">${money(avgCheck, { cents: false })}</div></div>
-    <div class="stat"><div class="stat__k">В день</div><div class="stat__v">${money(Math.round(total / Math.max(1, elapsed)), { cents: false })}</div></div>
+    ${range.kind === 'day' ? '' : `<div class="stat"><div class="stat__k">В день</div><div class="stat__v">${money(Math.round(total / Math.max(1, elapsed)), { cents: false })}</div></div>`}
     <div class="stat"><div class="stat__k">Всего трат</div><div class="stat__v">${list.length}</div></div>
-    <div class="stat"><div class="stat__k">Самый дорогой день</div><div class="stat__v">${maxDay ? money(maxDay.total, { cents: false }) : '—'}</div>${maxDay ? `<div class="stat__k">${esc(humanDay(fromIso(maxDay.date)))}</div>` : ''}</div>
+    ${range.kind === 'day' ? '' : `<div class="stat"><div class="stat__k">Самый дорогой день</div><div class="stat__v">${maxDay ? money(maxDay.total, { cents: false }) : '—'}</div>${maxDay ? `<div class="stat__k">${esc(humanDay(fromIso(maxDay.date)))}</div>` : ''}</div>`}
   </div>`;
 
   // Полосы по категориям
@@ -687,7 +699,9 @@ function jumpToDate(dateStr) {
   const d = fromIso(dateStr);
   if (d >= r.from && d < r.to) return;
   const now = new Date();
-  if (ui.period === 'week') {
+  if (ui.period === 'day') {
+    ui.offset = Math.round((startOfDay(d) - startOfDay(now)) / 86400000);
+  } else if (ui.period === 'week') {
     ui.offset = Math.round((startOfWeek(d) - startOfWeek(now)) / (7 * 86400000));
   } else {
     ui.offset = (d.getFullYear() - now.getFullYear()) * 12 + (d.getMonth() - now.getMonth());

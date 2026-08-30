@@ -1,5 +1,5 @@
 /* Сервис-воркер: приложение работает без интернета. */
-const CACHE = 'money-v1';
+const CACHE = 'money-v2';
 const ASSETS = [
   './',
   './index.html',
