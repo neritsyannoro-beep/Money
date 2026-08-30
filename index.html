@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Деньги — учёт расходов</title>
+<meta name="description" content="Простой офлайн-трекер расходов: категории, недельные и месячные итоги, отчёты.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#191919" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Деньги">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ШАПКА -->
+  <header class="topbar">
+    <div class="topbar__row">
+      <div class="segmented" id="periodSeg" role="tablist" aria-label="Период">
+        <button class="segmented__btn" data-period="week" role="tab">Неделя</button>
+        <button class="segmented__btn" data-period="month" role="tab">Месяц</button>
+        <button class="segmented__btn" data-period="all" role="tab">Всё</button>
+      </div>
+      <button class="icon-btn" id="btnSettings" aria-label="Настройки">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 13a7.8 7.8 0 0 0 .1-1 7.8 7.8 0 0 0-.1-1l2-1.6a.5.5 0 0 0 .1-.6l-1.9-3.2a.5.5 0 0 0-.6-.2l-2.4 1a7.3 7.3 0 0 0-1.7-1l-.4-2.5a.5.5 0 0 0-.5-.4h-3.8a.5.5 0 0 0-.5.4l-.4 2.5a7.3 7.3 0 0 0-1.7 1l-2.4-1a.5.5 0 0 0-.6.2L2.5 8.8a.5.5 0 0 0 .1.6L4.6 11a7.8 7.8 0 0 0 0 2l-2 1.6a.5.5 0 0 0-.1.6l1.9 3.2c.1.2.4.3.6.2l2.4-1c.5.4 1.1.8 1.7 1l.4 2.5c0 .3.2.4.5.4h3.8c.3 0 .5-.1.5-.4l.4-2.5c.6-.2 1.2-.6 1.7-1l2.4 1c.2.1.5 0 .6-.2l1.9-3.2a.5.5 0 0 0-.1-.6l-2-1.6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="scroll" id="scroll">
+
+    <!-- ЭКРАН: РАСХОДЫ -->
+    <section class="view" id="view-list">
+      <div class="hero">
+        <div class="hero__top">
+          <div>
+            <div class="hero__label" id="periodLabel">Август</div>
+            <div class="hero__sum" id="periodTotal">$0</div>
+          </div>
+          <div class="stepper">
+            <button class="icon-btn" id="prevPeriod" aria-label="Предыдущий период">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="icon-btn" id="nextPeriod" aria-label="Следующий период">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="hero__meta" id="heroMeta"></div>
+        <div class="budget" id="budgetBox" hidden>
+          <div class="budget__bar"><span id="budgetFill"></span></div>
+          <div class="budget__txt" id="budgetTxt"></div>
+        </div>
+      </div>
+
+      <div id="listBody"></div>
+    </section>
+
+    <!-- ЭКРАН: ОТЧЁТ -->
+    <section class="view" id="view-report" hidden>
+      <div class="hero">
+        <div class="hero__top">
+          <div>
+            <div class="hero__label" id="periodLabel2">Август</div>
+            <div class="hero__sum" id="periodTotal2">$0</div>
+          </div>
+          <div class="stepper">
+            <button class="icon-btn" id="prevPeriod2" aria-label="Предыдущий период">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="icon-btn" id="nextPeriod2" aria-label="Следующий период">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="hero__meta" id="heroMeta2"></div>
+      </div>
+      <div id="reportBody"></div>
+    </section>
+
+    <!-- ЭКРАН: КАТЕГОРИИ -->
+    <section class="view" id="view-cats" hidden>
+      <div id="catsBody"></div>
+    </section>
+
+  </main>
+
+  <!-- КНОПКА ДОБАВИТЬ -->
+  <button class="fab" id="fab" aria-label="Добавить расход">
+    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+  </button>
+
+  <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+  <nav class="tabbar" id="tabbar">
+    <button class="tabbar__btn is-active" data-view="list">Расходы</button>
+    <button class="tabbar__btn" data-view="report">Отчёт</button>
+    <button class="tabbar__btn" data-view="cats">Категории</button>
+  </nav>
+</div>
+
+<!-- ШТОРКА -->
+<div class="sheet-root" id="sheetRoot" hidden>
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+    <div class="sheet__grip" id="sheetGrip"><span></span></div>
+    <div class="sheet__body" id="sheetBody"></div>
+    <div class="sheet__foot" id="sheetFoot" hidden></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden><span id="toastText"></span><button id="toastAction" type="button"></button></div>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "Деньги — учёт расходов",
+  "short_name": "Деньги",
+  "description": "Простой офлайн-трекер расходов: категории, недельные и месячные итоги, отчёты.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": ".",
+  "scope": ".",
+  "id": "money-tracker",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
