@@ -135,7 +135,7 @@ button{background:none;border:0;padding:0;cursor:pointer;color:inherit}
 .delta--down{color:var(--good)}
 
 .budget{margin-top:14px}
-.budget__bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.budget__bar{display:block;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
 .budget__bar span{display:block;height:100%;border-radius:99px;background:var(--text);transition:width .3s ease}
 .budget__bar span.over{background:var(--danger)}
 .budget__txt{margin-top:6px;font-size:12.5px;color:var(--text-2)}
@@ -158,8 +158,8 @@ button{background:none;border:0;padding:0;cursor:pointer;color:inherit}
   background:var(--c-gray-b);
 }
 .row__main{flex:1;min-width:0}
-.row__title{font-size:15.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row__sub{font-size:13px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.row__title{display:block;font-size:15.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row__sub{display:block;font-size:13px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
 .row__amt{font-size:15.5px;font-weight:600;flex:0 0 auto;letter-spacing:-.01em;white-space:nowrap}
 
 /* ============ Пустой экран ============ */
@@ -189,7 +189,7 @@ button{background:none;border:0;padding:0;cursor:pointer;color:inherit}
 .bar__dot{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:14px;flex:0 0 auto}
 .bar__name{flex:1;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar__val{font-size:15px;font-weight:600}
-.bar__track{height:6px;border-radius:99px;background:var(--surface-2);margin-top:8px;overflow:hidden}
+.bar__track{display:block;height:6px;border-radius:99px;background:var(--surface-2);margin-top:8px;overflow:hidden}
 .bar__fill{display:block;height:100%;border-radius:99px;transition:width .35s ease}
 .bar__sub{margin-top:5px;font-size:12.5px;color:var(--text-2);display:flex;justify-content:space-between;gap:8px}
 
