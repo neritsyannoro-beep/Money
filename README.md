@@ -35,12 +35,16 @@
 
 ## Публикация (GitHub Pages, бесплатно)
 
-1. Залей этот репозиторий на GitHub (ветка `main`).
-2. Settings → Pages → **Source: GitHub Actions**.
-3. Через минуту адрес появится там же: `https://<логин>.github.io/Money/`.
+Код уже лежит в ветке `main`. Остаётся один раз включить хостинг:
 
-В репозитории уже лежит workflow `.github/workflows/pages.yml` — он публикует сайт при каждом пуше в `main`.
-Альтернатива без Actions: Settings → Pages → Source: *Deploy from a branch* → `main` / `/ (root)`.
+1. Открой репозиторий на GitHub → **Settings** → в левом меню **Pages**.
+2. В блоке *Build and deployment* выбери **Source: Deploy from a branch**,
+   ветка **`main`**, папка **`/ (root)`** → **Save**.
+3. Подожди минуту и обнови страницу — вверху появится адрес вида
+   **`https://neritsyannoro-beep.github.io/Money/`**. Это и есть ссылка на приложение.
+
+Дальше каждый пуш в `main` обновляет сайт сам. Открывать ссылку нужно с телефона —
+и добавлять на домашний экран по инструкции выше.
 
 Локально:
 
